@@ -55,7 +55,7 @@ static int fs_getattr(const char *path, struct stat *stbuf,
                 stbuf->st_nlink = 1;
                 break;
             case LINK_FILE:
-                stbuf->st_mode = S_IFREG | 0444;
+                stbuf->st_mode = S_IFREG | 0644;
                 stbuf->st_nlink = 1;
                 stbuf->st_size = link->content_length;
                 stbuf->st_blksize = 128*1024;
