@@ -145,13 +145,25 @@ static int fs_readdir(const char *path, void *buf, fuse_fill_dir_t dir_add,
     return 0;
 }
 
+static int fs_listxattr(const char *path, char *list, size_t size)
+{
+    /*
+    int res = llistxattr(path, list, size);
+    if (res == -1)
+        return -errno;
+    return res;
+    */
+    return 0;
+}
+
 static struct fuse_operations fs_oper = {
     .getattr	= fs_getattr,
     .readdir	= fs_readdir,
     .open		= fs_open,
     .read		= fs_read,
     .init       = fs_init,
-    .release    = fs_release
+    .release    = fs_release,
+    .listxattr  = fs_listxattr
 };
 
 int fuse_local_init(int argc, char **argv)
