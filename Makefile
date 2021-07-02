@@ -2,9 +2,9 @@ VERSION = 1.2.1
 
 CFLAGS += -O2 -Wall -Wextra -Wshadow -rdynamic -D_GNU_SOURCE\
 	-D_FILE_OFFSET_BITS=64 -DVERSION=\"$(VERSION)\"\
-	`pkg-config --cflags-only-I gumbo libcurl fuse uuid expat`
-LDFLAGS += `pkg-config --libs-only-L gumbo libcurl fuse uuid expat`
-LIBS = -pthread -lgumbo -lcurl -lfuse -lcrypto -lexpat
+	`pkg-config --cflags-only-I gumbo libcurl fuse3 uuid expat`
+LDFLAGS += `pkg-config --libs-only-L gumbo libcurl fuse3 uuid expat`
+LIBS = -pthread -lgumbo -lcurl -lfuse3 -lcrypto -lexpat
 COBJS = main.o network.o fuse_local.o link.o cache.o util.o sonic.o
 
 OS := $(shell uname)

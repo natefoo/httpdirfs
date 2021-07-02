@@ -3,14 +3,15 @@
 #include "cache.h"
 
 /* must be included before including <fuse.h> */
-#define FUSE_USE_VERSION 26
-#include <fuse.h>
+#define FUSE_USE_VERSION 30
+#include <fuse3/fuse.h>
 
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
 
-static void *fs_init(struct fuse_conn_info *conn)
+static void *fs_init(struct fuse_conn_info *conn,
+                     struct fuse_config *cfg)
 {
     (void) conn;
     return NULL;
@@ -27,7 +28,8 @@ static int fs_release(const char *path, struct fuse_file_info *fi)
 }
 
 /** \brief return the attributes for a single file indicated by path */
-static int fs_getattr(const char *path, struct stat *stbuf)
+static int fs_getattr(const char *path, struct stat *stbuf,
+                      struct fuse_file_info *fi)
 {
     int res = 0;
     memset(stbuf, 0, sizeof(struct stat));
@@ -115,7 +117,8 @@ static int fs_open(const char *path, struct fuse_file_info *fi)
 
 /** \brief read the directory indicated by the path*/
 static int fs_readdir(const char *path, void *buf, fuse_fill_dir_t dir_add,
-                      off_t offset, struct fuse_file_info *fi)
+                      off_t offset, struct fuse_file_info *fi,
+                      enum fuse_readdir_flags flags)
 {
     (void) offset;
     (void) fi;
@@ -133,12 +136,13 @@ static int fs_readdir(const char *path, void *buf, fuse_fill_dir_t dir_add,
     }
 
     /* start adding the links */
-    dir_add(buf, ".", NULL, 0);
-    dir_add(buf, "..", NULL, 0);
+    enum fuse_fill_dir_flags fill_flags = 0;
+    dir_add(buf, ".", NULL, 0, fill_flags);
+    dir_add(buf, "..", NULL, 0, fill_flags);
     for (int i = 1; i < linktbl->num; i++) {
         link = linktbl->links[i];
         if (link->type != LINK_INVALID) {
-            dir_add(buf, link->linkname, NULL, 0);
+            dir_add(buf, link->linkname, NULL, 0, fill_flags);
         }
     }
 
